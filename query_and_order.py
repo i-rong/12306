@@ -468,7 +468,11 @@ def start():
         while not get_value('order_success'):
             # 仅未提交订单时开始自动查询
             if not get_value('ordering'):
-                success = process_from_query_start()
+                try:
+                    success = process_from_query_start()
+                except Exception as e:
+                    log(f'发生{e}, 稍后将重新查询')
+                    success = False
                 if not success:
                     time.sleep(delay_time)
             else:

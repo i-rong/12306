@@ -1,11 +1,22 @@
 import base64
 import os
 import time
+import qrcode
 
 from api_login import user_login, redirect_user_login, to_user_auth_center
 from api_with_cookie import update_cookie
 from log.log import log
 
+def print_qr_code(data):
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=1,
+        border=4,
+    )
+    qr.add_data(data)
+    qr.make(fit=True)
+    qr.print_ascii()
 
 def create_qr64():
     url = 'https://kyfw.12306.cn/passport/web/create-qr64'
@@ -22,6 +33,8 @@ def create_qr64():
         file.write(image)
         file.close()
         log(rsp['result_message'])
+        url = "https://mobile.12306.cn/otsmobile/h5/otsbussiness/downloadapp/downloadapp.html?loginUUID="
+        print_qr_code(url + rsp['uuid'])
         return rsp['uuid']
     else:
         log('登录二维码生成失败，code = ' + rsp['result_code'] + ', result_message = ' + rsp['result_message'])

@@ -16,6 +16,8 @@ def get_today_str():
 def is_success(response):
     if response is None:
         return False
+    if not isinstance(response, dict):
+        return False
     if 'result_code' in response:
         return str(response['result_code']) == '0'
     if 'status' in response:
